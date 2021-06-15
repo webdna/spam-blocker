@@ -1,0 +1,52 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Spam Blocker plugin for Craft CMS 3.x
+ *
+ * Spam Blocker index.twig
+ *
+ * @author    webdna
+ * @copyright Copyright (c) 2021 webdna
+ * @link      https://webdna.co.uk
+ * @package   SpamBlocker
+ * @since     0.0.1
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{# {% do view.registerAssetBundle("webdna\\spamblocker\\assetbundles\\spamblocker\\SpamBlockerAsset") %} #}
+{% set fullPageForm = true %}
+
+{% set title = "Spam Blocker: Pattern" %}
+
+{% set content %}
+	<input type="hidden" name="action" value="spam-blocker/patterns/save">
+	{{ redirectInput('spam-blocker') }}
+	{% if pattern.id %}
+		<input type="hidden" name="id" value="{{ pattern.id }}">
+	{% endif %}
+	
+	{{ forms.textField({
+		label: "Field Name",
+		first: true,
+		instructions: "The name of the form field to check against or * for all fields",
+		id: 'name',
+		name: 'name',
+		value: pattern.name,
+		errors: pattern.getErrors('name'),
+		required: true
+	}) }}
+	
+	{{ forms.textField({
+		label: "Value",
+		instructions: "The regex pattern to test against",
+		id: 'value',
+		name: 'value',
+		value: pattern.value,
+		errors: pattern.getErrors('value'),
+		required: true
+	}) }}
+	
+{% endset %}

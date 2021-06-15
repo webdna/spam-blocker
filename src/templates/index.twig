@@ -1,0 +1,80 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Spam Blocker plugin for Craft CMS 3.x
+ *
+ * Spam Blocker index.twig
+ *
+ * @author    webdna
+ * @copyright Copyright (c) 2021 webdna
+ * @link      https://webdna.co.uk
+ * @package   SpamBlocker
+ * @since     0.0.1
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{# {% do view.registerAssetBundle("webdna\\spamblocker\\assetbundles\\spamblocker\\SpamBlockerAsset") %} #}
+{# {% do view.registerAssetBundle("webdna\\spamblocker\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %} #}
+{% do view.registerAssetBundle('craft\\web\\assets\\admintable\\AdminTableAsset') -%}
+
+{% set title = "Spam Blocker" %}
+
+{% set pluginCpUrl = url('spam-blocker') %}
+
+
+{% block actionButton %}
+    {# <div class="buttons"> #}
+        <a href="{{ url('spam-blocker/new') }}" class="btn submit add icon">{{ "Add new pattern"|t('spam-blocker') }}</a>
+    {# </div> #}
+{% endblock %}
+
+{% set content %}
+    <div id="patterns-vue-admin-table"></div>
+{% endset %}
+
+{% set tableData = [] %}
+{% for pattern in patterns %}
+    {% set tableData = tableData|merge([{
+        id: pattern.id,
+        name: pattern.name,
+        pattern: pattern.value,
+        url: url('spam-blocker/edit/'~pattern.id),
+    }]) %}
+{% endfor %}
+
+{% js %}
+var columns = [
+    {
+        name: 'id',
+        title: Craft.t('app', 'Id'),
+    },
+    {
+        name: 'name',
+        title: Craft.t('app', 'Name'),
+    },
+    {
+        name: 'pattern',
+        title: Craft.t('app', 'Pattern'),
+    },
+    {
+        name: 'url',
+        title: Craft.t('app', 'Url'),
+        callback: function(value) {
+            return '<a href="'+value+'" class="btn small" data-icon="edit">Edit</a>';
+        }
+    }
+];
+
+new Craft.VueAdminTable({
+    columns: columns,
+    container: '#patterns-vue-admin-table',
+    deleteAction: 'spam-blocker/patterns/delete',
+    deleteConfirmationMessage: 'Are you sure you want to delete this pattern?',
+    minItems: 0,
+    padded: true,
+    tableData: {{ tableData|json_encode|raw }},
+    });
+{% endjs %}

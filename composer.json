@@ -1,0 +1,49 @@
+{
+    "name": "webdna/spam-blocker",
+    "description": "Add regex tests to form field validation",
+    "type": "craft-plugin",
+    "version": "0.0.1",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "spam blocker"
+    ],
+    "support": {
+        "docs": "https://github.com/spam-blocker/spam-blocker/blob/master/README.md",
+        "issues": "https://github.com/spam-blocker/spam-blocker/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "webdna",
+            "homepage": "https://webdna.co.uk"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0"
+    },
+    "require-dev": {
+      "craftcms/cms": "^3.2.0",
+      "codeception/codeception": "^3.0",
+      "vlucas/phpdotenv": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "webdna\\spamblocker\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Spam Blocker",
+        "handle": "spam-blocker",
+        "developer": "webdna",
+        "developerUrl": "https://webdna.co.uk",
+        "documentationUrl": "https://github.com/spam-blocker/spam-blocker/blob/master/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/spam-blocker/spam-blocker/master/CHANGELOG.md",
+        "components": {
+            "spamBlockerService": "webdna\\spamblocker\\services\\SpamBlockerService"
+        },
+        "class": "webdna\\spamblocker\\SpamBlocker"
+    }
+}
