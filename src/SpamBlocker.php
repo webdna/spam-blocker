@@ -95,10 +95,11 @@ class SpamBlocker extends Plugin
             });
         }
 
-        //formie
+        //formie requires 1.4.20
+        // TODO: version_compare(Craft::$app->getInfo()->version, '3.0', '<')
         if (Craft::$app->plugins->isPluginEnabled('formie')) {
-            Event::on(\verbb\formie\services\Submissions::class, \verbb\formie\services\Submissions::EVENT_AFTER_SUBMISSION, function (
-                \verbb\formie\events\SubmissionEvent $event
+            Event::on(\verbb\formie\services\Submissions::class, \verbb\formie\services\Submissions::EVENT_BEFORE_SPAM_CHECK, function (
+                \verbb\formie\events\SubmissionSpamCheckEvent $event
             ) {
                 $fieldValues = $this->_getFormieContentAsString($event->submission);
 
