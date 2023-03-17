@@ -123,7 +123,7 @@ class SpamBlocker extends Plugin
         foreach ($this->patterns->getAllPatterns() as $pattern) {
             foreach ($values as $key => $value) {
                 // check if string contains
-                if (is_array($pattern->value)) {
+                if (!is_string($value)) {
                     return false;
                 }
                 if (($pattern->name == '*' || $pattern->name == $key) && preg_match('/' . $pattern->value . '/', $value)) {
