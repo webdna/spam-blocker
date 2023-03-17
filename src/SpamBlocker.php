@@ -86,7 +86,9 @@ class SpamBlocker extends Plugin
 
         // wheelform
         if (Craft::$app->plugins->isPluginEnabled('wheelform')) {
-            Event::on(\wheelform\db\MessageValue::class, \wheelform\db\MessageValue::EVENT_BEFORE_VALIDATE, function (\yii\base\ModelEvent $event) {
+            Event::on(\wheelform\db\MessageValue::class,
+            \wheelform\db\MessageValue::EVENT_BEFORE_VALIDATE,
+            function (\yii\base\ModelEvent $event) {
                 $fieldValues = [$event->sender->getField()->one()->name => $event->sender->getValue()];
 
                 if ($this->_checkPatterns($fieldValues)) {
@@ -98,9 +100,9 @@ class SpamBlocker extends Plugin
         //formie requires 1.4.20
         // TODO: version_compare(Craft::$app->getInfo()->version, '3.0', '<')
         if (Craft::$app->plugins->isPluginEnabled('formie')) {
-            Event::on(\verbb\formie\services\Submissions::class, \verbb\formie\services\Submissions::EVENT_BEFORE_SPAM_CHECK, function (
-                \verbb\formie\events\SubmissionSpamCheckEvent $event
-            ) {
+            Event::on(\verbb\formie\services\Submissions::class,
+            \verbb\formie\services\Submissions::EVENT_BEFORE_SPAM_CHECK,
+            function (\verbb\formie\events\SubmissionSpamCheckEvent $event) {
                 $fieldValues = $this->_getFormieContentAsString($event->submission);
 
                 if ($this->_checkPatterns($fieldValues)) {
@@ -121,6 +123,9 @@ class SpamBlocker extends Plugin
         foreach ($this->patterns->getAllPatterns() as $pattern) {
             foreach ($values as $key => $value) {
                 // check if string contains
+                if (is_array($pattern->value)) {
+                    return false;
+                }
                 if (($pattern->name == '*' || $pattern->name == $key) && preg_match('/' . $pattern->value . '/', $value)) {
                     return true;
                 }
