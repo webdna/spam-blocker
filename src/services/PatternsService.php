@@ -42,7 +42,7 @@ class PatternsService extends Component
         return $patterns;
     }
 
-    public function getPatternById(int $id): ?PatternModel
+    public function getPatternById(?int $id): ?PatternModel
     {
         $result = $this->_createPatternQuery()->where(['id' => $id])->one();
 

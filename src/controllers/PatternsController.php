@@ -65,7 +65,7 @@ class PatternsController extends Controller
     /**
      * @return Response
      */
-    public function actionSave(): Response
+    public function actionSave(): ?Response
     {
         $this->requirePostRequest();
         $id = Craft::$app->getRequest()->getBodyParam('id');
@@ -81,11 +81,10 @@ class PatternsController extends Controller
 
         if (SpamBlocker::$plugin->patterns->savePattern($pattern)) {
             Craft::$app->getSession()->setNotice('Pattern saved!');
-            $this->redirectToPostedUrl($pattern);
+            return $this->redirectToPostedUrl($pattern);
         } else {
-            Craft::$app->getSession()->setError("Couldn't save the pattern, this combination might already exist");
             Craft::$app->getUrlManager()->setRouteParams(compact('pattern'));
-            return null;
+            return $this->asFailure("Couldn't save the pattern, this combination might already exist");
         }
     }
 
