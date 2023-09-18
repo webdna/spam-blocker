@@ -10,8 +10,6 @@
 
 namespace webdna\spamblocker\migrations;
 
-use webdna\spamblocker\SpamBlocker;
-
 use Craft;
 use craft\config\DbConfig;
 use craft\db\Migration;
@@ -37,7 +35,7 @@ class Install extends Migration
     /**
      * @inheritdoc
      */
-    public function safeUp()
+    public function safeUp(): bool
     {
         $this->driver = Craft::$app->getConfig()->getDb()->driver;
         if ($this->createTables()) {
@@ -54,7 +52,7 @@ class Install extends Migration
     /**
       * @inheritdoc
       */
-    public function safeDown()
+    public function safeDown(): bool
     {
         $this->driver = Craft::$app->getConfig()->getDb()->driver;
         $this->removeTables();
@@ -68,7 +66,7 @@ class Install extends Migration
     /**
      * @return bool
      */
-    protected function createTables()
+    protected function createTables(): bool
     {
         $tablesCreated = false;
 
@@ -78,13 +76,13 @@ class Install extends Migration
             $this->createTable(
                 '{{%spamblocker_patterns}}',
                 [
-                          'id' => $this->primaryKey(),
-                          'dateCreated' => $this->dateTime()->notNull(),
-                          'dateUpdated' => $this->dateTime()->notNull(),
-                          'uid' => $this->uid(),
-                          'name' => $this->string()->notNull()->defaultValue(''),
-                          'value' => $this->string()->notNull()->defaultValue(''),
-                     ]
+                    'id' => $this->primaryKey(),
+                    'dateCreated' => $this->dateTime()->notNull(),
+                    'dateUpdated' => $this->dateTime()->notNull(),
+                    'uid' => $this->uid(),
+                    'name' => $this->string()->notNull()->defaultValue(''),
+                    'value' => $this->string()->notNull()->defaultValue(''),
+                ]
             );
         }
 
@@ -94,36 +92,36 @@ class Install extends Migration
     /**
      * @return void
      */
-    protected function createIndexes()
+    protected function createIndexes(): void
     {
         $this->createIndex(null, '{{%spamblocker_patterns}}', ['name', 'value'], true);
         // Additional commands depending on the db driver
         switch ($this->driver) {
-                case DbConfig::DRIVER_MYSQL:
-                     break;
-                case DbConfig::DRIVER_PGSQL:
-                     break;
-          }
+            case DbConfig::DRIVER_MYSQL:
+                break;
+            case DbConfig::DRIVER_PGSQL:
+                break;
+        }
     }
 
     /**
      * @return void
      */
-    protected function addForeignKeys()
+    protected function addForeignKeys(): void
     {
     }
 
     /**
      * @return void
      */
-    protected function insertDefaultData()
+    protected function insertDefaultData(): void
     {
     }
 
     /**
      * @return void
      */
-    protected function removeTables()
+    protected function removeTables(): void
     {
         $this->dropTableIfExists('{{%spamblocker_patterns}}');
     }

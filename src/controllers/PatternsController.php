@@ -16,6 +16,8 @@ use webdna\spamblocker\models\PatternModel;
 use Craft;
 use craft\web\Controller;
 
+use yii\web\Response;
+
 /**
  * @author    webdna
  * @package   SpamBlocker
@@ -27,19 +29,17 @@ class PatternsController extends Controller
     // =========================================================================
 
     /**
-     * @var    bool|array Allows anonymous access to this controller's actions.
-     *         The actions must be in 'kebab-case'
-     * @access protected
+     * @inheritdoc
      */
-    protected $allowAnonymous = [];
+    protected array|bool|int $allowAnonymous = [];
 
     // Public Methods
     // =========================================================================
 
     /**
-     * @return mixed
+     * @return Response
      */
-    public function actionIndex()
+    public function actionIndex(): Response
     {
         $patterns = SpamBlocker::$plugin->patterns->getAllPatterns();
 
@@ -47,9 +47,9 @@ class PatternsController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return Response
      */
-    public function actionEdit(int $id = null, PatternModel $pattern = null)
+    public function actionEdit(int $id = null, PatternModel $pattern = null): Response
     {
         if (!$pattern) {
             if ($id) {
@@ -63,9 +63,9 @@ class PatternsController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return Response
      */
-    public function actionSave()
+    public function actionSave(): Response
     {
         $this->requirePostRequest();
         $id = Craft::$app->getRequest()->getBodyParam('id');
@@ -90,9 +90,9 @@ class PatternsController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return Response
      */
-    public function actionDelete()
+    public function actionDelete(): Response
     {
         $this->requireAcceptsJson();
         $id = Craft::$app->getRequest()->getRequiredParam('id');

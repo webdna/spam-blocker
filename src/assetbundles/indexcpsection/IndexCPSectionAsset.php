@@ -10,7 +10,6 @@
 
 namespace webdna\spamblocker\assetbundles\indexcpsection;
 
-use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
@@ -27,7 +26,7 @@ class IndexCPSectionAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         $this->sourcePath = "@webdna/spamblocker/assetbundles/indexcpsection/dist";
 

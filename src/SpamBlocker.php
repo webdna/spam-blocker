@@ -38,7 +38,7 @@ class SpamBlocker extends Plugin
     /**
      * @var SpamBlocker
      */
-    public static $plugin;
+    public static ?Plugin $plugin = null;
 
     // Public Properties
     // =========================================================================
@@ -51,12 +51,12 @@ class SpamBlocker extends Plugin
     /**
      * @var bool
      */
-    public $hasCpSettings = false;
+    public bool $hasCpSettings = false;
 
     /**
      * @var bool
      */
-    public $hasCpSection = true;
+    public bool $hasCpSection = true;
 
     // Public Methods
     // =========================================================================
@@ -64,7 +64,7 @@ class SpamBlocker extends Plugin
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         self::$plugin = $this;
@@ -103,7 +103,7 @@ class SpamBlocker extends Plugin
             Event::on(\verbb\formie\services\Submissions::class,
             \verbb\formie\services\Submissions::EVENT_BEFORE_SPAM_CHECK,
             function (\verbb\formie\events\SubmissionSpamCheckEvent $event) {
-                $fieldValues = $this->_getFormieContentAsString($event->submission);
+                $fieldValues = $this->_getFormieContent($event->submission);
 
                 if ($this->_checkPatterns($fieldValues)) {
                     $event->submission->isSpam = true;
@@ -118,7 +118,7 @@ class SpamBlocker extends Plugin
     // Protected Methods
     // =========================================================================
 
-    private function _checkPatterns($values)
+    private function _checkPatterns(array $values): bool
     {
         foreach ($this->patterns->getAllPatterns() as $pattern) {
             foreach ($values as $key => $value) {
@@ -138,7 +138,7 @@ class SpamBlocker extends Plugin
         return false;
     }
 
-    private function _getFormieContentAsString($submission)
+    private function _getFormieContent(\verbb\formie\elements\Submission $submission): array
     {
         $fieldValues = [];
 

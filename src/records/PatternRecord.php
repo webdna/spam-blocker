@@ -10,9 +10,6 @@
 
 namespace webdna\spamblocker\records;
 
-use webdna\spamblocker\SpamBlocker;
-
-use Craft;
 use craft\db\ActiveRecord;
 
 /**
@@ -28,7 +25,7 @@ class PatternRecord extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%spamblocker_patterns}}';
     }

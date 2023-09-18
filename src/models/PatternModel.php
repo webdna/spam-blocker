@@ -10,9 +10,6 @@
 
 namespace webdna\spamblocker\models;
 
-use webdna\spamblocker\SpamBlocker;
-
-use Craft;
 use craft\base\Model;
 
 /**
@@ -25,12 +22,9 @@ class PatternModel extends Model
     // Public Properties
     // =========================================================================
 
-    /**
-     * @var string
-     */
-    public $id;
-    public $name;
-    public $value;
+    public string|int|null $id = null;
+    public ?string $name = null;
+    public ?string $value = null;
 
     // Public Methods
     // =========================================================================
@@ -38,11 +32,12 @@ class PatternModel extends Model
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function defineRules(): array
     {
-        return [
-            [['name', 'value'], 'string'],
-            [['name', 'value'], 'required'],
-        ];
+        $rules = parent::defineRules();
+        $rules[] = [['name', 'value'], 'string'];
+        $rules[] = [['name', 'value'], 'required'];
+
+        return $rules;
     }
 }

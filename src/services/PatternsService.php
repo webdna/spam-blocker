@@ -10,7 +10,6 @@
 
 namespace webdna\spamblocker\services;
 
-use webdna\spamblocker\SpamBlocker;
 use webdna\spamblocker\models\PatternModel;
 use webdna\spamblocker\records\PatternRecord;
 
@@ -30,9 +29,9 @@ class PatternsService extends Component
     // =========================================================================
 
     /*
-     * @return mixed
+     * @return array
      */
-    public function getAllPatterns()
+    public function getAllPatterns(): array
     {
         $patterns = [];
 
@@ -43,7 +42,7 @@ class PatternsService extends Component
         return $patterns;
     }
 
-    public function getPatternById($id)
+    public function getPatternById(int $id): ?PatternModel
     {
         $result = $this->_createPatternQuery()->where(['id' => $id])->one();
 
@@ -54,7 +53,7 @@ class PatternsService extends Component
         return new PatternModel($result);
     }
 
-    public function savePattern($model)
+    public function savePattern(PatternModel $model): bool
     {
         $transaction = Craft::$app->getDb()->beginTransaction();
         try {
@@ -70,19 +69,20 @@ class PatternsService extends Component
 
             $transaction->commit();
             return true;
-        } catch (Throwable $e) {
+        }
+        catch (Throwable $e) {
             $transaction->rollBack();
             //throw $e;
             return false;
         }
     }
 
-    public function deletePattern($id)
+    public function deletePattern(int $id): ?bool
     {
         $record = PatternRecord::findOne($id);
 
         if (!$record) {
-            return;
+            return null;
         }
 
         $transaction = Craft::$app->getDb()->beginTransaction();
@@ -90,7 +90,8 @@ class PatternsService extends Component
             $record->delete();
             $transaction->commit();
             return true;
-        } catch (Throwable $e) {
+        }
+        catch (Throwable $e) {
             $transaction->rollBack();
             //throw $e;
             return false;
