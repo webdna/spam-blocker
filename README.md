@@ -1,4 +1,4 @@
-# Spam Blocker plugin for Craft CMS 3.x
+# Spam Blocker plugin for Craft CMS 4.x
 
 Add regex tests to form field validation
 

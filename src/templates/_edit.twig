@@ -1,7 +1,7 @@
 {# @var craft \craft\web\twig\variables\CraftVariable #}
 {#
 /**
- * Spam Blocker plugin for Craft CMS 3.x
+ * Spam Blocker plugin for Craft CMS 4.x
  *
  * Spam Blocker index.twig
  *
@@ -27,7 +27,7 @@
 	{% if pattern.id %}
 		<input type="hidden" name="id" value="{{ pattern.id }}">
 	{% endif %}
-	
+
 	{{ forms.textField({
 		label: "Field Name",
 		first: true,
@@ -38,7 +38,7 @@
 		errors: pattern.getErrors('name'),
 		required: true
 	}) }}
-	
+
 	{{ forms.textField({
 		label: "Value",
 		instructions: "The regex pattern to test against",
@@ -48,5 +48,5 @@
 		errors: pattern.getErrors('value'),
 		required: true
 	}) }}
-	
+
 {% endset %}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Spam Blocker plugin for Craft CMS 3.x
+ * Spam Blocker plugin for Craft CMS 4.x
  *
  * Add regex tests to form field validation
  *
@@ -46,7 +46,7 @@ class SpamBlocker extends Plugin
     /**
      * @var string
      */
-    public $schemaVersion = '0.0.1';
+    public string $schemaVersion = '0.0.1';
 
     /**
      * @var bool
