@@ -1,12 +1,10 @@
-# Spam Blocker plugin for Craft CMS 4.x
+# Spam Blocker plugin for Craft CMS 5.x
 
 Add regex tests to form field validation
 
-![Screenshot](resources/img/plugin-logo.png)
-
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
+This plugin requires Craft CMS 5.0 or later.
 
 ## Installation
 
@@ -18,7 +16,7 @@ To install the plugin, follow these instructions.
 
 2. Then tell Composer to load the plugin:
 
-        composer require spam-blocker/spam-blocker
+        composer require webdna/spam-blocker
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Spam Blocker.
 

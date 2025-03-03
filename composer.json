@@ -2,7 +2,7 @@
 	"name": "webdna/spam-blocker",
 	"description": "Add regex tests to form field validation",
 	"type": "craft-plugin",
-	"version": "4.0.3",
+	"version": "5.0.0",
 	"keywords": [
 		"craft",
 		"cms",
@@ -22,11 +22,11 @@
 		}
 	],
 	"require": {
-		"craftcms/cms": "^4.0.0"
+		"craftcms/cms": "^5.0.0"
 	},
 	"require-dev": {
-		"codeception/codeception": "^4.0",
-		"vlucas/phpdotenv": "^4.0"
+		"codeception/codeception": "^5.2",
+		"vlucas/phpdotenv": "^5.4"
 	},
 	"autoload": {
 		"psr-4": {
@@ -44,5 +44,11 @@
 			"spamBlockerService": "webdna\\spamblocker\\services\\SpamBlockerService"
 		},
 		"class": "webdna\\spamblocker\\SpamBlocker"
+	},
+	"config": {
+		"allow-plugins": {
+			"yiisoft/yii2-composer": true,
+			"craftcms/plugin-installer": true
+		}
 	}
 }

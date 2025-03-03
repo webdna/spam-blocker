@@ -1,6 +1,6 @@
 <?php
 /**
- * Spam Blocker plugin for Craft CMS 4.x
+ * Spam Blocker plugin for Craft CMS 5.x
  *
  * Add regex tests to form field validation
  *
