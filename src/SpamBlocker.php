@@ -142,38 +142,36 @@ class SpamBlocker extends Plugin
     {
         $fieldValues = [];
 
-        if (($fieldLayout = $submission->getFieldLayout()) !== null) {
-            foreach ($fieldLayout->getCustomFields() as $field) {
-                try {
-                    $value = $submission->getFieldValue($field->handle);
+        foreach ($fieldLayout->getFields() as $field) {
+            try {
+                $value = $submission->getFieldValue($field->handle);
 
-                    if ($value instanceof NestedFieldRowQuery) {
-                        $values = [];
+                if ($value instanceof NestedFieldRowQuery) {
+                    $values = [];
 
-                        foreach ($value->all() as $row) {
-                            $fieldValues[$field->handle] = $this->_getContentAsString($row);
-                        }
-
-                        continue;
+                    foreach ($value->all() as $row) {
+                        $fieldValues[$field->handle] = $this->_getContentAsString($row);
                     }
 
-                    if ($value instanceof ElementQuery) {
-                        $value = $value->one();
-                    }
-
-                    if ($value instanceof MultiOptionsFieldData) {
-                        $value = implode(
-                            ' ',
-                            array_map(function ($item) {
-                                return $item->value;
-                            }, (array) $value)
-                        );
-                    }
-
-                    $fieldValues[$field->handle] = (string) $value;
-                } catch (\Throwable $e) {
                     continue;
                 }
+
+                if ($value instanceof ElementQuery) {
+                    $value = $value->one();
+                }
+
+                if ($value instanceof MultiOptionsFieldData) {
+                    $value = implode(
+                        ' ',
+                        array_map(function ($item) {
+                            return $item->value;
+                        }, (array) $value)
+                    );
+                }
+
+                $fieldValues[$field->handle] = (string) $value;
+            } catch (\Throwable $e) {
+                continue;
             }
         }
 
