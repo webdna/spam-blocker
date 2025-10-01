@@ -142,7 +142,7 @@ class SpamBlocker extends Plugin
     {
         $fieldValues = [];
 
-        foreach ($fieldLayout->getFields() as $field) {
+        foreach ($submission->getFields() as $field) {
             try {
                 $value = $submission->getFieldValue($field->handle);
 
