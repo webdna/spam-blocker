@@ -97,19 +97,33 @@ class SpamBlocker extends Plugin
             });
         }
 
-        //formie requires 1.4.20
-        // TODO: version_compare(Craft::$app->getInfo()->version, '3.0', '<')
+        // Formie
         if (Craft::$app->plugins->isPluginEnabled('formie')) {
-            Event::on(\verbb\formie\services\Submissions::class,
-            \verbb\formie\services\Submissions::EVENT_BEFORE_SPAM_CHECK,
-            function (\verbb\formie\events\SubmissionSpamCheckEvent $event) {
-                $fieldValues = $this->_getFormieContent($event->submission);
+            if (class_exists(\verbb\formie\services\SubmissionWorkflow::class)) {
+                // Formie 4+: spam checks run as the `screen.evaluateSpam` workflow task. Marking the
+                // submission as spam before that task runs makes Formie skip its own checks and
+                // handle it as spam, the same as the old `beforeSpamCheck` event.
+                Event::on(\verbb\formie\services\SubmissionWorkflow::class,
+                \verbb\formie\services\SubmissionWorkflow::EVENT_BEFORE_TASK,
+                function (\verbb\formie\events\SubmissionWorkflowTaskEvent $event) {
+                    if ($event->task !== 'screen.evaluateSpam' || !$event->command) {
+                        return;
+                    }
 
-                if ($this->_checkPatterns($fieldValues)) {
-                    $event->submission->isSpam = true;
-                    $event->submission->spamReason = 'Contains banned keyword';
-                }
-            });
+                    if ($event->command->navigation !== \verbb\formie\enums\NavigationIntent::ADVANCE) {
+                        return;
+                    }
+
+                    $this->_checkFormieSubmission($event->command->submission);
+                });
+            } else {
+                // Formie 2/3
+                Event::on(\verbb\formie\services\Submissions::class,
+                \verbb\formie\services\Submissions::EVENT_BEFORE_SPAM_CHECK,
+                function (\verbb\formie\events\SubmissionSpamCheckEvent $event) {
+                    $this->_checkFormieSubmission($event->submission);
+                });
+            }
         }
 
         Craft::info(Craft::t('spam-blocker', '{name} plugin loaded', ['name' => $this->name]), __METHOD__);
@@ -124,7 +138,7 @@ class SpamBlocker extends Plugin
             foreach ($values as $key => $value) {
                 // check if string contains
                 if (!is_string($value)) {
-                    return false;
+                    continue;
                 }
                 if (($pattern->name == '*' || $pattern->name == $key) && preg_match('/' . $pattern->value . '/', $value)) {
                     return true;
@@ -138,6 +152,18 @@ class SpamBlocker extends Plugin
         return false;
     }
 
+    private function _checkFormieSubmission(?\verbb\formie\elements\Submission $submission): void
+    {
+        if (!$submission || $submission->isSpam) {
+            return;
+        }
+
+        if ($this->_checkPatterns($this->_getFormieContent($submission))) {
+            $submission->isSpam = true;
+            $submission->spamReason = 'Contains banned keyword';
+        }
+    }
+
     private function _getFormieContent(\verbb\formie\elements\Submission $submission): array
     {
         $fieldValues = [];
@@ -146,35 +172,36 @@ class SpamBlocker extends Plugin
             try {
                 $value = $submission->getFieldValue($field->handle);
 
-                if ($value instanceof NestedFieldRowQuery) {
-                    $values = [];
-
-                    foreach ($value->all() as $row) {
-                        $fieldValues[$field->handle] = $this->_getContentAsString($row);
-                    }
-
-                    continue;
+                // Let Formie flatten its own value types (options, groups, repeaters, elements, etc.)
+                if (method_exists($field, 'getValueAsString')) {
+                    $value = $field->getValueAsString($value, $submission);
                 }
 
-                if ($value instanceof ElementQuery) {
-                    $value = $value->one();
-                }
-
-                if ($value instanceof MultiOptionsFieldData) {
-                    $value = implode(
-                        ' ',
-                        array_map(function ($item) {
-                            return $item->value;
-                        }, (array) $value)
-                    );
-                }
-
-                $fieldValues[$field->handle] = (string) $value;
+                $fieldValues[$field->handle] = $this->_valueToString($value);
             } catch (\Throwable $e) {
                 continue;
             }
         }
 
         return $fieldValues;
+    }
+
+    private function _valueToString(mixed $value): string
+    {
+        if (is_array($value) || $value instanceof \Traversable) {
+            $parts = [];
+
+            foreach ($value as $item) {
+                $parts[] = $this->_valueToString($item);
+            }
+
+            return implode(' ', array_filter($parts, fn($part) => $part !== ''));
+        }
+
+        if (is_scalar($value) || $value instanceof \Stringable) {
+            return (string) $value;
+        }
+
+        return '';
     }
 }
